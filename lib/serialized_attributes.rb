@@ -25,7 +25,7 @@ module SerializedAttributes
   
   module ClassMethods
     def columns_with_serialized_attributes
-      columns_without_serialized_attributes + serialized_attributes_definition.values
+      columns_without_serialized_attributes + (serialized_attributes_definition.try(:values) || [])
     end
     
     def instantiate_with_serialized_attributes(record)
