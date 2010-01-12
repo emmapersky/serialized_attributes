@@ -17,9 +17,11 @@ module ActiveRecord
       end
       
       def insert_record(record, force = false, validate = true)
+        load_target
         #set_belongs_to_association_for(record)
-        force ? record.save! : record.save(validate)
-        ids << record.id
+        result = !record.new_record? || (force ? record.save! : record.save(validate))
+        self.ids = (ids + [record.id]) if result
+        result
       end
       
       def delete_records(records)

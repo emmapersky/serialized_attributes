@@ -56,11 +56,12 @@ class SimpleTest < Test::Unit::TestCase
     
     post = Post.create(:title => "First Post", :body => "Lorem ...")
     assert !post.new_record?
-    post.comments = [Comment.create(:body => "this is a comment")]
+    post.comments << Comment.new(:body => "this is a comment")
     post.comments << Comment.create(:body => "this is second comment")
+    post.comments.create(:body => "one more")
     assert_equal Comment.all.map(&:id), post.comment_ids
     post.save
-    assert post.reload.comments.length == 2
+    assert_equal 3, post.reload.comments.size
     
   end
   
