@@ -1,7 +1,6 @@
-
 require 'test/unit'
 require 'rubygems'
-require 'activerecord'
+require 'active_record'
 
 ActiveRecord::Base.establish_connection :adapter => 'sqlite3', :database => ':memory:'
 
@@ -14,6 +13,12 @@ class DocumentsSchema < ActiveRecord::Migration
       t.string :type
       t.integer :reference_id           # <---  you can also define any sql columns for your indexes
       t.timestamps
+    end
+    
+    create_table :mixeds do |t|
+      t.title
+      t.body
+      t.text :serialized_attributes     # <---  here all your dynamic fields will be saved
     end
   end
 end
@@ -43,17 +48,22 @@ class Comment < Document
   
 end
 
+class Mixed < ActiveRecord::Base
+  set_table_name :mixeds
+end
+
+class MixedWithSA < ActiveRecord::Base
+  set_table_name :mixeds
+
+  include SerializedAttributes
+  attribute :custom_field, String, :default => 'default value'
+end
 
 class SimpleTest < Test::Unit::TestCase
-  
-  
-  def schema!
-    DocumentsSchema.suppress_messages{ DocumentsSchema.migrate(:up) }
-  end
-  
+  # ActiveRecord::Base.logger = Logger.new(STDOUT)
+  DocumentsSchema.suppress_messages{ DocumentsSchema.migrate(:up) }
+
   def test_simple
-    schema!
-    
     post = Post.create(:title => "First Post", :body => "Lorem ...")
     assert !post.new_record?
     post.comments << Comment.new(:body => "this is a comment")
@@ -65,5 +75,10 @@ class SimpleTest < Test::Unit::TestCase
     
   end
   
-end
+  def test_null_serialized_attributes_column_on_already_exists_records
+    Mixed.create
+    doc = MixedWithSA.first
 
+    assert_equal doc.custom_field, 'default value'
+  end
+end
