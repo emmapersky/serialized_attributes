@@ -60,7 +60,7 @@ module SerializedAttributes
     end
     
     def unpack_serialized_attributes!
-      if @attributes.has_key?(serialized_attributes_column.to_s) && attributes = self[serialized_attributes_column]
+      if @attributes.has_key?(serialized_attributes_column.to_s) && attributes = (self[serialized_attributes_column] || {})
         serialized_attributes_definition.each do |key, column|
           @attributes[key] = attributes.has_key?(key) ? attributes[key] : column.default
         end 
