@@ -30,18 +30,16 @@ Example of usage
       attribute :body,  String
       attribute :is_published, Boolean, :default => false
       
-      attribute :comment_ids, Array     # <--- serialized Array of ids of associated comments
+      attribute :comment_ids, Array             # <--- serialized Array of ids of associated comments
       has_references_to :comments
       
       validates_presence_of :title, :body
     end
     
     class Comment < Document
-      attribute :body, String
+      attribute :body, String, :requied => true # <--- validates_presence_of :body
       attribute :post_id, Integer
       belongs_to :post
-      
-      validates_presence_of :body
     end
     
 IRB fun

@@ -53,7 +53,7 @@ class ModelAfter < ActiveRecord::Base
 end
 
 class SimpleTest < Test::Unit::TestCase
-  ActiveRecord::Base.logger = Logger.new(STDOUT)
+  # ActiveRecord::Base.logger = Logger.new(STDOUT)
   DocumentsSchema.suppress_messages{ DocumentsSchema.migrate(:up) }
 
   def test_simple
