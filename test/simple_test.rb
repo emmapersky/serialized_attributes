@@ -52,6 +52,13 @@ class ModelAfter < ActiveRecord::Base
   attribute :custom_field, String, :default => 'default value'
 end
 
+class ModelSecond < ActiveRecord::Base
+  set_table_name :documents
+  include SerializedAttributes
+  attribute :custom_field_renamed, String, :default => 'new default value'
+end
+
+
 class SimpleTest < Test::Unit::TestCase
   # ActiveRecord::Base.logger = Logger.new(STDOUT)
   DocumentsSchema.suppress_messages{ DocumentsSchema.migrate(:up) }
@@ -72,5 +79,13 @@ class SimpleTest < Test::Unit::TestCase
     model_after = ModelAfter.find(model_before.id)
 
     assert_equal model_after.custom_field, 'default value'
+  end
+
+  def test_removed_custom_field
+    model1 = ModelAfter.create
+    model2 = ModelSecond.find(model1.id)
+    model2.save!
+    model2.reload
+    assert_equal model2.serialized_attributes.keys.include?('custom_field'), false
   end
 end

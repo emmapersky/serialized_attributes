@@ -72,6 +72,7 @@ module SerializedAttributes
         serialized_attributes_definition.each do |key, column|
           attributes[key] = self.send key
         end
+        attributes.slice!(*serialized_attributes_definition.keys)
       end
     end
   end
