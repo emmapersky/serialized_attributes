@@ -48,7 +48,7 @@ module SerializedAttributes
       else
         fail ArgumentError, "Unknown type #{type}"
       end
-      validates_presence_of name if opts[:requied] == true
+      validates_presence_of name if opts[:requied]
       attr_accessible name if opts[:attr_accessible]
     end
     
