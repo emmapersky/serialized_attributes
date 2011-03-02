@@ -20,6 +20,14 @@ class DocumentsSchema < ActiveRecord::Migration
       t.body
       t.text :serialized_attributes     # <---  here all your dynamic fields will be saved
     end
+    
+    create_table :widgets do |t|
+      t.string :name
+      t.boolean :active
+      t.text :serialized_attributes
+      t.timestamps
+    end
+    
   end
 end
 
@@ -48,6 +56,14 @@ class Comment < Document
   
 end
 
+class Widget < ActiveRecord::Base
+  include SerializedAttributes
+  #protect other attributes from mass assignment, ie is_published and comment_ids
+  attr_accessible :name
+  
+  accessible_attribute :creator, String
+end
+
 class Mixed < ActiveRecord::Base
   set_table_name :mixeds
 end
@@ -60,7 +76,7 @@ class MixedWithSA < ActiveRecord::Base
 end
 
 class SimpleTest < Test::Unit::TestCase
-  # ActiveRecord::Base.logger = Logger.new(STDOUT)
+  ActiveRecord::Base.logger = Logger.new(STDOUT)
   DocumentsSchema.suppress_messages{ DocumentsSchema.migrate(:up) }
 
   def test_simple
@@ -81,4 +97,10 @@ class SimpleTest < Test::Unit::TestCase
 
     assert_equal doc.custom_field, 'default value'
   end
+  
+  def test_accessible_attributes_are_created
+    widget = Widget.create(:name => "Secrect Widget", :creator => "Fox Mulder")
+    assert widget.creator == "Fox Mulder"
+  end
+  
 end

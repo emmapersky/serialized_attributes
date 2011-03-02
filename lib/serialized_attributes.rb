@@ -34,6 +34,10 @@ module SerializedAttributes
       object
     end
     
+    def accessible_attribute(name, type, opts = {})
+      attribute(name, type, opts.merge({:attr_accessible => true}))
+    end
+    
     def attribute(name, type, opts = {})
       type = SerializedAttributes.type_to_sqltype(type)
       if type.is_a?(Symbol)
@@ -45,6 +49,7 @@ module SerializedAttributes
         fail ArgumentError, "Unknown type #{type}"
       end
       validates_presence_of name if opts[:requied] == true
+      attr_accessible name if opts[:attr_accessible]
     end
     
   end
