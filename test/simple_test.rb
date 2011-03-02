@@ -58,9 +58,11 @@ end
 
 class Widget < ActiveRecord::Base
   include SerializedAttributes
-  #protect other attributes from mass assignment, ie is_published and comment_ids
+
+  #protect other attributes from mass assignment
   attr_accessible :name
   
+  #specifically permit a given serialized attribute to be mass assigned
   accessible_attribute :creator, String
 end
 

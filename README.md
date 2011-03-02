@@ -45,6 +45,18 @@ allows to define dynamic serialized fields in your AR model, which acts as norma
     post.save
     assert post.reload.comments.length == 2
 
+# Mass Assignment and Protect Attributes
+	class Widget < ActiveRecord::Base
+	  include SerializedAttributes
+	
+	  #protect other attributes from mass assignment
+	  attr_accessible :name
+
+		#specifically permit a given serialized attribute to be mass assigned
+	  accessible_attribute :creator, String
+	end
+
+
 # limitations
 - has-references-to association dont update reverse association
 - serialized-attributes column saved every time you call :save without depending on what is actually changed
