@@ -5,6 +5,8 @@ This is a very cool lib, allows to define dynamic serialized fields in your AR m
 It give you full power of rails to your virtual columns: validations, rails forms, error messages, type casting
 (integer, date/time), type safety, :dirty? s, etc.. STI is supported! Basic associations is working too!
 
+Now updated for Rails 3
+
 Example of usage
 ----------------
 
