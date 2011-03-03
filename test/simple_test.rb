@@ -22,7 +22,6 @@ class DocumentsSchema < ActiveRecord::Migration
       t.text :serialized_attributes
       t.timestamps
     end
-    
   end
 end
 
@@ -69,17 +68,22 @@ end
 
 class Widget < ActiveRecord::Base
   include SerializedAttributes
-
-  #protect other attributes from mass assignment
-  attr_accessible :name
   
-  #specifically permit a given serialized attribute to be mass assigned
-  accessible_attribute :creator, String
+  #white list the name attribute, others may not be mass assigned
+  attr_accessible :name, String
+end
+
+class Sprocket < Widget
+  #we want the attribute in_motion, but it may not be mass assigned
+  attribute :in_motion, Boolean
+  
+  #we want to allow the size attribute to be mass assigned
+  accessible_attribute :size, Integer
 end
 
 
 class SimpleTest < Test::Unit::TestCase
-  ActiveRecord::Base.logger = Logger.new(STDOUT)
+  #ActiveRecord::Base.logger = Logger.new(STDOUT)
   DocumentsSchema.suppress_messages{ DocumentsSchema.migrate(:up) }
 
   def test_simple
@@ -88,29 +92,32 @@ class SimpleTest < Test::Unit::TestCase
     post.comments << Comment.new(:body => "this is a comment")
     post.comments << Comment.create(:body => "this is second comment")
     post.comments.create(:body => "one more")
+        
     assert_equal Comment.all.map(&:id), post.comment_ids
     post.save
+    
     assert_equal 3, post.reload.comments.size
   end
-
+  
+  
   def test_null_serialized_attributes_column_on_already_exists_records
     model_before = ModelBefore.create
     model_after = ModelAfter.find(model_before.id)
-
+  
     assert_equal model_after.custom_field, 'default value'
   end
-
+  
   def test_removed_custom_field
     model1 = ModelAfter.create
     model2 = ModelSecond.find(model1.id)
     model2.save!
     model2.reload
+    
     assert_equal model2.serialized_attributes.keys.include?('custom_field'), false
   end
   
   def test_accessible_attributes_are_created
-    widget = Widget.create(:name => "Secrect Widget", :creator => "Fox Mulder")
-    assert widget.creator == "Fox Mulder"
-  end  
-  
+    sprocket = Sprocket.create(:name => "Spacely's Space Sprocket", :size => 99)
+    assert sprocket.size == 99
+  end
 end

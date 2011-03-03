@@ -18,8 +18,8 @@ module ActiveRecord
       
       def insert_record(record, force = false, validate = true)
         load_target
-        #set_belongs_to_association_for(record)
-        result = !record.new_record? || (force ? record.save! : record.save(validate))
+        set_belongs_to_association_for(record)
+        result = !record.new_record? || (force ? record.save! : record.save(:validate => validate))
         self.ids = (ids + [record.id]) if result
         result
       end
@@ -27,6 +27,25 @@ module ActiveRecord
       def delete_records(records)
         self.ids = ids - records.map(&:id)
       end
+      
+      def create(attrs = {})
+        if attrs.is_a?(Array)
+          attrs.collect { |attr| create(attr) }
+        else
+          create_record(attrs) do |record|
+            yield(record) if block_given?
+            self.ids = (ids << record.id) if record.save
+          end
+        end
+      end
+
+      def create!(attrs = {})
+        create_record(attrs) do |record|
+          yield(record) if block_given?
+          record.save!
+          self.ids = (ids << record.id)           
+        end
+      end      
     end
   
     module ClassMethods
@@ -40,8 +59,8 @@ module ActiveRecord
   
       def has_references_to(association_id, options = {}, &extension)
         reflection = create_has_references_to_reflection(association_id, options, &extension)
-        #configure_dependency_for_has_many(reflection)
-        #add_association_callbacks(reflection.name, reflection.options)
+        configure_dependency_for_has_many(reflection)
+        add_association_callbacks(reflection.name, reflection.options)
 
         collection_accessor_methods(reflection, HasReferencesToAssociation)
       end
