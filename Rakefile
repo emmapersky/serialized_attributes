@@ -12,13 +12,33 @@ require 'rake'
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
-  gem.name = "foo"
+  gem.name = "serialized_attributes"
   gem.homepage = "http://github.com/emmapersky/serialized_attributes"
   gem.license = "MIT"
   gem.summary = %Q{Simple serialization of row level attributes}
   gem.description = %Q{Serialize model attributes to a single database column instead}
   gem.email = "emma.persky@gmail.com"
   gem.authors = ["Emma Persky"]
+  
+  gem.add_runtime_dependency 'activerecord', '~> 3.0.0'
+  gem.add_development_dependency 'sqlite3'
+  gem.add_development_dependency 'jeweler'
+  gem.add_development_dependency 'bundler'
+  
+  gem.files = [
+    "Gemfile",
+    "Gemfile.lock",
+    "init.rb",
+    "lib/has_references_to.rb",
+    "lib/serialized_attributes.rb",
+    "LICENSE.txt",
+    "Rakefile",
+    "README.md",
+    "test/simple_test.rb",
+    "VERSION",
+  ]
+  
+  gem.require_paths = ["lib"]
   # Include your dependencies below. Runtime dependencies are required when using your gem,
   # and development dependencies are only needed for development (ie running rake tasks, tests, etc)
   #  gem.add_runtime_dependency 'jabber4r', '> 0.1'
