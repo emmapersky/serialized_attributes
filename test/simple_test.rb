@@ -100,14 +100,20 @@ class SimpleTest < Test::Unit::TestCase
   end
   
   
+  # => it should initialize attributes on objects even if they were serialized before that attribute existed
   def test_null_serialized_attributes_column_on_already_exists_records
+    # => to test this, we create a model (ModelBefore) that has no attributes (but has an attributes column)
+    # => then we create second model (ModelAfter) which we force to use the same table as ModelBefore (set_table_name)
+    # => We create an object using ModelBefore and then try to load it using ModelAfter.
     model_before = ModelBefore.create
     model_after = ModelAfter.find(model_before.id)
   
     assert_equal model_after.custom_field, 'default value'
   end
   
+  # => it should not unpack custom attributes on objects if they have been removed
   def test_removed_custom_field
+    # => to test this, we use a similar method to the prior test, but change (or remove) an attribute
     model1 = ModelAfter.create
     model2 = ModelSecond.find(model1.id)
     model2.save!
@@ -116,6 +122,7 @@ class SimpleTest < Test::Unit::TestCase
     assert_equal model2.serialized_attributes.keys.include?('custom_field'), false
   end
   
+  # => it should create attributes as whitelisted and allow their mass assignment
   def test_accessible_attributes_are_created
     sprocket = Sprocket.create(:name => "Spacely's Space Sprocket", :size => 99)
     assert sprocket.size == 99
