@@ -127,4 +127,14 @@ class SimpleTest < Test::Unit::TestCase
     sprocket = Sprocket.create(:name => "Spacely's Space Sprocket", :size => 99)
     assert sprocket.size == 99
   end
+  
+  # => test that the names of the serialized attributes are correctly returned by a class
+  def test_serizalied_attribute_names_are_returned_by_the_class
+    assert Sprocket.serialized_attribute_names.sort == ['in_motion', 'size'].sort
+  end
+  
+  # => test that the names of the serialized attributes are correctly returned by the instance
+  def test_serizalied_attribute_names_are_returned_by_an_instance
+    assert Sprocket.new.serialized_attribute_names.sort == ['in_motion', 'size'].sort
+  end  
 end

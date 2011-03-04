@@ -31,6 +31,10 @@ module SerializedAttributes
       attribute(name, type, opts.merge({:attr_accessible => true}))
     end
 
+    def serialized_attribute_names
+      serialized_attributes_definition.keys
+    end    
+
     def attribute(name, type, opts = {})
       name = name.to_s
       type = SerializedAttributes.type_to_sqltype(type)
@@ -48,7 +52,11 @@ module SerializedAttributes
       pack_serialized_attributes!
       super
     end
-  
+    
+    def serialized_attribute_names
+      self.class.serialized_attribute_names
+    end
+
     def unpack_serialized_attributes!
       if @attributes.has_key?(serialized_attributes_column.to_s) && attributes = (self[serialized_attributes_column] || {})
         serialized_attributes_definition.each do |key, column|

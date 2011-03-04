@@ -1,2 +1,2 @@
-require File.dirname(__FILE__) + '/lib/has_references_to'
-require File.dirname(__FILE__) + '/lib/serialized_attributes'
+require File.dirname(__FILE__) + '/serialized_attributes/has_references_to'
+require File.dirname(__FILE__) + '/serialized_attributes/serialized_attributes'
