@@ -5,7 +5,7 @@ require 'logger'
 
 ActiveRecord::Base.establish_connection :adapter => 'sqlite3', :database => ':memory:'
 
-require File.dirname(__FILE__) + "/../init"  # load plugin
+require File.dirname(__FILE__) + "/../lib/serialized_attributes"  # load plugin
 
 class DocumentsSchema < ActiveRecord::Migration
   def self.up
