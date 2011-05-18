@@ -41,7 +41,7 @@ module SerializedAttributes
       serialized_attributes_definition[name] = ActiveRecord::ConnectionAdapters::Column.new(name.to_s, opts[:default], type.to_s, nil)
 
       define_method("#{name.to_s}=".to_sym) { |value| @attributes[name] = value }
-      define_method(name) { self.class.serialized_attributes_definition[name].type_cast(@attributes[name]) }
+      define_method(name) { self.class.serialized_attributes_definition[name].type_cast(@attributes.fetch(name, opts[:default])) }
       
       attr_accessible name if opts[:attr_accessible]
     end
